@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Swipe - Sign Up</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <style>
+      :root {
+        --tiktok-dark: #000000;
+        --tiktok-gray: #2f2f2f;
+        --tiktok-red: #fe2c55;
+      }
+
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--tiktok-dark);
+        color: white;
+      }
+
+      .min-h-screen {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 28rem;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      .title {
+        font-size: 2.25rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .subtitle {
+        color: #9ca3af;
+      }
+
+      .form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .input {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: var(--tiktok-gray);
+        border: none;
+        border-radius: 0.375rem;
+        color: white;
+        box-sizing: border-box;
+      }
+
+      .input::placeholder {
+        color: #9ca3af;
+      }
+
+      .button {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: var(--tiktok-red);
+        border: none;
+        border-radius: 0.375rem;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .button:hover {
+        background-color: rgba(254, 44, 85, 0.9);
+      }
+
+      .button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .social-login {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .social-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 0.375rem;
+        color: white;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.2s;
+        font-weight: 500;
+        backdrop-filter: blur(5px);
+      }
+
+      .social-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Google */
+      .social-button.google {
+        background-color: white;
+        color: #444;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+      }
+
+      /* Facebook */
+      .social-button.facebook {
+        background-color: #1877f2;
+      }
+
+      /* Instagram */
+      .social-button.instagram {
+        background: linear-gradient(
+          45deg,
+          #f09433 0%,
+          #e6683c 25%,
+          #dc2743 50%,
+          #cc2366 75%,
+          #bc1888 100%
+        );
+      }
+
+      /* Twitter */
+      .social-button.twitter {
+        background-color: #1da1f2;
+      }
+
+      .social-button i {
+        font-size: 1.25rem;
+      }
+
+      .spinner {
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .login-text {
+        text-align: center;
+        margin-top: 2rem;
+        color: #9ca3af;
+        font-size: 0.875rem;
+      }
+
+      .login-link {
+        color: var(--tiktok-red);
+        text-decoration: none;
+      }
+
+      .login-link:hover {
+        text-decoration: underline;
+      }
+
+      .continue-with-text {
+        text-align: center;
+        color: #9ca3af;
+        font-size: 0.875rem;
+        margin: 1.5rem 0 1rem;
+      }
+
+      .privacy-text {
+        text-align: center;
+        color: #9ca3af;
+        font-size: 0.75rem;
+        margin-top: 1.5rem;
+        line-height: 1.4;
+        padding: 0 1rem;
+      }
+
+      .policy-link {
+        color: white;
+        text-decoration: none;
+        transition: opacity 0.2s;
+      }
+
+      .policy-link:hover {
+        opacity: 0.8;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="min-h-screen">
+      <div class="container">
+        <div class="text-center">
+          <h1 class="title">Swipe</h1>
+          <p class="subtitle">Create Your Account</p>
+        </div>
+
+        <form id="signup-form" class="form">
+          <input type="text" class="input" placeholder="Username" required />
+          <input
+            type="email"
+            class="input"
+            placeholder="Email address"
+            required
+          />
+          <input
+            type="password"
+            class="input"
+            placeholder="Password"
+            required
+          />
+          <input
+            type="password"
+            class="input"
+            placeholder="Confirm Password"
+            required
+          />
+          <button type="submit" class="button">
+            <span class="button-text">Sign Up</span>
+          </button>
+        </form>
+
+        <!-- Social Sign Up -->
+        <p class="continue-with-text">Or continue with</p>
+        <div class="social-login">
+          <button class="social-button google" id="google-signup">
+            <i class="fab fa-google"></i>
+            Google
+          </button>
+          <button class="social-button facebook" id="facebook-signup">
+            <i class="fab fa-facebook-f"></i>
+            Facebook
+          </button>
+          <button class="social-button instagram" id="instagram-signup">
+            <i class="fab fa-instagram"></i>
+            Instagram
+          </button>
+          <button class="social-button twitter" id="twitter-signup">
+            <i class="fab fa-twitter"></i>
+            Twitter
+          </button>
+        </div>
+
+        <p class="login-text">
+          Already have an account?
+          <a href="#" class="login-link">Login</a>
+        </p>
+
+        <p class="privacy-text">
+          By continuing, you agree to Swipe's
+          <a href="#" class="policy-link">Terms of Service</a> and confirm that
+          you have read Swipe's
+          <a href="#" class="policy-link">Privacy Policy</a>
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Firebase Configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyB985MeiuGcoPTLYGQtdzRqXdGnAwQzbrQ",
+        authDomain: "swipe-628da.firebaseapp.com",
+        projectId: "swipe-628da",
+        storageBucket: "swipe-628da.firebasestorage.app",
+        messagingSenderId: "404793568436",
+        appId: "1:404793568436:web:e7c68e0bc6a377b90ffbe1",
+        measurementId: "G-7J05BL239V",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+
+      // Signup Form Submission
+      document
+        .getElementById("signup-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const usernameInput = e.target.querySelector(
+            'input[placeholder="Username"]'
+          );
+          const emailInput = e.target.querySelector(
+            'input[placeholder="Email address"]'
+          );
+          const passwordInput = e.target.querySelector(
+            'input[type="password"]'
+          );
+          const confirmPasswordInput = e.target.querySelectorAll(
+            'input[type="password"]'
+          )[1];
+          const button = e.target.querySelector(".button");
+          const buttonText = button.querySelector(".button-text");
+
+          // Validate passwords match
+          if (passwordInput.value !== confirmPasswordInput.value) {
+            alert("Passwords do not match");
+            return;
+          }
+
+          // Disable button and show loading state
+          button.disabled = true;
+          buttonText.innerHTML =
+            '<i class="fas fa-spinner spinner"></i> Creating Account...';
+
+          try {
+            // Create user in Firebase
+            const userCredential = await auth.createUserWithEmailAndPassword(
+              emailInput.value,
+              passwordInput.value
+            );
+
+            // Update user profile with username
+            await userCredential.user.updateProfile({
+              displayName: usernameInput.value,
+            });
+
+            alert("Account created successfully!");
+            // Redirect or further actions can be added here
+          } catch (error) {
+            console.error("Signup error:", error);
+            alert(`Signup failed: ${error.message}`);
+          }
+
+          // Reset button state
+          button.disabled = false;
+          buttonText.textContent = "Sign Up";
+        });
+
+      // Social Signup Handlers
+      document
+        .getElementById("google-signup")
+        .addEventListener("click", async () => {
+          const provider = new firebase.auth.GoogleAuthProvider();
+          try {
+            const result = await auth.signInWithPopup(provider);
+            alert("Google Signup Successful!");
+            // Additional actions after signup
+          } catch (error) {
+            console.error("Google signup error:", error);
+            alert(`Google signup failed: ${error.message}`);
+          }
+        });
+
+      // Similar handlers for other social signups can be added
+      document
+        .getElementById("facebook-signup")
+        .addEventListener("click", async () => {
+          const provider = new firebase.auth.FacebookAuthProvider();
+          try {
+            const result = await auth.signInWithPopup(provider);
+            alert("Facebook Signup Successful!");
+          } catch (error) {
+            console.error("Facebook signup error:", error);
+            alert(`Facebook signup failed: ${error.message}`);
+          }
+        });
+    </script>
+  </body>
+</html>
